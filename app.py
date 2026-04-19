@@ -6,6 +6,15 @@ from database import init_db, get_db_conn
 app = Flask(__name__)
 
 
+def _running_in_streamlit() -> bool:
+    try:
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+
+        return get_script_run_ctx() is not None
+    except Exception:
+        return False
+
+
 # ================= LANDING =================
 @app.route("/")
 def landing():
@@ -259,5 +268,10 @@ def confirm():
 
 # ================= RUN =================
 if __name__ == "__main__":
-    init_db()
-    app.run(debug=True)
+    if _running_in_streamlit():
+        from streamlit_app import main as streamlit_main
+
+        streamlit_main()
+    else:
+        init_db()
+        app.run(debug=True)
