@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Order History - Taste Junction</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Order History</h1>
+    </header>
+
+    <div class="container">
+      <p><b>User:</b> {{ email }}</p>
+
+      {% if orders %}
+      <table style="width: 100%; margin-top: 20px; color: white">
+        <tr>
+          <th>Food</th>
+          <th>Price</th>
+          <th>Time</th>
+          <th>Status</th>
+        </tr>
+        {% for o in orders %}
+        <tr>
+          <td>{{ o[0] }}</td>
+          <td>₹ {{ o[1] }}</td>
+          <td>{{ o[2] }}</td>
+          <td>{{ o[3] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p>No orders yet.</p>
+      {% endif %}
+
+      <br />
+      <a href="{{ url_for('menu', email=email) }}">← Back to Menu</a>
+    </div>
+  </body>
+</html>

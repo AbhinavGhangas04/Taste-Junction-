@@ -1,0 +1,124 @@
+<link rel="stylesheet" href="/static/style.css">
+
+<div class="card center payment-card">
+  <h2>💳 Choose payment method</h2>
+
+  <p><b>Order ID:</b> #{{ order_id }}</p>
+  <p><b>Customer:</b> {{ email }}</p>
+  <p><b>Items:</b> {{ food }}</p>
+  <p><b>Total Amount:</b> ₹{{ total }}</p>
+
+  <form action="/confirm" method="post" id="payment-form">
+    <input type="hidden" name="order_id" value="{{ order_id }}">
+
+    <div class="payment-methods">
+      <label class="payment-method-card">
+        <input type="radio" name="payment_method" value="upi" checked />
+        <div class="payment-method-content">
+          <span class="payment-title">UPI</span>
+          <span class="payment-sub">Instant payment via any UPI app</span>
+        </div>
+      </label>
+
+      <label class="payment-method-card">
+        <input type="radio" name="payment_method" value="card" />
+        <div class="payment-method-content">
+          <span class="payment-title">Card</span>
+          <span class="payment-sub">Credit / Debit card payment</span>
+        </div>
+      </label>
+
+      <label class="payment-method-card">
+        <input type="radio" name="payment_method" value="cod" />
+        <div class="payment-method-content">
+          <span class="payment-title">Cash on Delivery</span>
+          <span class="payment-sub">Pay directly at the counter</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Dynamic details -->
+    <div id="upi-fields" class="payment-details">
+      <label>
+        UPI ID
+        <input type="text" name="upi_id" placeholder="name@upi" required />
+      </label>
+    </div>
+
+    <div id="card-fields" class="payment-details" style="display:none;">
+      <label>
+        Card number
+        <input type="text" name="card_number" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" />
+      </label>
+      <div class="payment-row">
+        <label>
+          Expiry
+          <input type="text" name="card_expiry" maxlength="5" placeholder="MM/YY" />
+        </label>
+        <label>
+          CVV
+          <input type="password" name="card_cvv" maxlength="3" placeholder="***" />
+        </label>
+      </div>
+    </div>
+
+    <div id="cod-fields" class="payment-details" style="display:none;">
+      <p>You will pay at the counter when you collect your order.</p>
+    </div>
+
+    <button class="place-btn" type="submit">Confirm & Generate Bill</button>
+  </form>
+</div>
+
+<script>
+  (function () {
+    const methodInputs = document.querySelectorAll('input[name="payment_method"]');
+    const upiFields = document.getElementById('upi-fields');
+    const cardFields = document.getElementById('card-fields');
+    const codFields = document.getElementById('cod-fields');
+    const form = document.getElementById('payment-form');
+
+    function updateVisibility() {
+      const selected = document.querySelector('input[name="payment_method"]:checked').value;
+
+      upiFields.style.display = selected === 'upi' ? '' : 'none';
+      cardFields.style.display = selected === 'card' ? '' : 'none';
+      codFields.style.display = selected === 'cod' ? '' : 'none';
+
+      // Required toggling
+      const upiInput = upiFields.querySelector('input[name="upi_id"]');
+      const cardNumber = cardFields.querySelector('input[name="card_number"]');
+      const cardExpiry = cardFields.querySelector('input[name="card_expiry"]');
+      const cardCvv = cardFields.querySelector('input[name="card_cvv"]');
+
+      if (upiInput) upiInput.required = selected === 'upi';
+      if (cardNumber) cardNumber.required = selected === 'card';
+      if (cardExpiry) cardExpiry.required = selected === 'card';
+      if (cardCvv) cardCvv.required = selected === 'card';
+    }
+
+    methodInputs.forEach((el) => {
+      el.addEventListener('change', updateVisibility);
+    });
+
+    // Basic UPI format validation on submit: name@bank or name.number@bank
+    form.addEventListener('submit', function (e) {
+      const selected = document.querySelector('input[name="payment_method"]:checked').value;
+      if (selected !== 'upi') return; // only validate for UPI
+
+      const upiInput = upiFields.querySelector('input[name="upi_id"]');
+      if (!upiInput) return;
+
+      const value = upiInput.value.trim();
+      const upiPattern = /^[a-zA-Z0-9.\-_]{3,}@[a-zA-Z]{3,}$/;
+
+      if (!upiPattern.test(value)) {
+        e.preventDefault();
+        alert('Please enter a valid UPI ID, for example: name@upi or user123@okicici');
+        upiInput.focus();
+      }
+    });
+
+    updateVisibility();
+  })();
+</script>

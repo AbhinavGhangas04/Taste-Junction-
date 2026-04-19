@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="/static/style.css">
+
+<div class="card">
+  <h2>Cafeteria Queue - Live Orders</h2>
+  <p>Track incoming orders, see payment type and update status in real time.</p>
+
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Token</th>
+        <th>Student</th>
+        <th>Items</th>
+        <th>Total</th>
+        <th>Time</th>
+        <th>Payment</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in orders %}
+      {# row: id, email, food, total, time, status, payment_method #}
+      <tr>
+        <td>#{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+        <td>₹{{ row[3] }}</td>
+        <td>{{ row[4] }}</td>
+        <td>
+          {% if row[6] == 'upi' %}
+            <span class="badge badge-upi">UPI</span>
+          {% elif row[6] == 'card' %}
+            <span class="badge badge-card">CARD</span>
+          {% elif row[6] == 'cod' %}
+            <span class="badge badge-cod">COD</span>
+          {% elif not row[6] and row[5] != 'PENDING' %}
+            {# Old/pre-existing orders where method wasn't stored but order is not pending -> treat as Paid #}
+            <span class="badge badge-online">PAID</span>
+          {% else %}
+            <span class="badge badge-pending">Pending</span>
+          {% endif %}
+        </td>
+        <td>
+          <span class="status-pill status-{{ row[5]|lower }}">{{ row[5] }}</span>
+        </td>
+        <td>
+          <form method="POST" action="{{ url_for('admin') }}" class="admin-actions">
+            <input type="hidden" name="order_id" value="{{ row[0] }}" />
+
+            {% if row[5] == 'PENDING' %}
+            <button name="status" value="PREPARING" class="btn-small btn-processing">
+              Start Preparing
+            </button>
+            {% elif row[5] == 'PREPARING' %}
+            <button name="status" value="PACKED" class="btn-small btn-ready">
+              Mark Packed
+            </button>
+            {% elif row[5] == 'PACKED' %}
+            <button name="status" value="DELIVERED" class="btn-small btn-delivered">
+              Delivered
+            </button>
+            {% else %}
+            <span class="badge badge-done">Done</span>
+            {% endif %}
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Auto-refresh admin view every 8 seconds to keep queue live
+  setTimeout(function () {
+    window.location.reload();
+  }, 8000);
+</script>

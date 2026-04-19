@@ -1,0 +1,66 @@
+<link rel="stylesheet" href="/static/style.css">
+
+<div class="track-page">
+  <div class="track-card">
+    <div class="track-header">
+      <h2>Taste Junction | Order Tracking</h2>
+      {% if order %}
+      <p class="track-subtitle">Token #{{ order[0] }} • {{ order[2] }}</p>
+      {% endif %}
+    </div>
+
+    <div class="track-content">
+      {% if order %}
+      <div class="track-left">
+        <p><b>Your Token:</b> #{{ order[0] }}</p>
+        <p><b>Items:</b> {{ order[2] }}</p>
+
+        {% if current_preparing %}
+        <p class="track-info"><b>Currently Preparing Token:</b> #{{ current_preparing }}</p>
+        {% else %}
+        <p class="track-info">No order is being prepared right now.</p>
+        {% endif %}
+      </div>
+
+      <div class="track-right">
+        <div class="track-steps">
+          {% set status = order[5] %}
+          <div class="step {{ 'active' if status in ['PENDING','PREPARING','PACKED','DELIVERED'] else '' }}">
+            <span class="step-number">1</span>
+            <span class="step-label">Pending</span>
+          </div>
+          <div class="step {{ 'active' if status in ['PREPARING','PACKED','DELIVERED'] else '' }}">
+            <span class="step-number">2</span>
+            <span class="step-label">Preparing</span>
+          </div>
+          <div class="step {{ 'active' if status in ['PACKED','DELIVERED'] else '' }}">
+            <span class="step-number">3</span>
+            <span class="step-label">Packed</span>
+          </div>
+          <div class="step {{ 'active' if status == 'DELIVERED' else '' }}">
+            <span class="step-number">4</span>
+            <span class="step-label">Delivered</span>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <p>No order found.</p>
+      {% endif %}
+    </div>
+
+    <p class="track-refresh-text">
+      This page auto-refreshes every 5 seconds so you can see live updates.
+    </p>
+
+    <a href="/menu">
+      <button class="place-btn">Back to Menu</button>
+    </a>
+  </div>
+</div>
+
+<script>
+  // Auto refresh every 5 seconds for near real-time tracking
+  setTimeout(function () {
+    window.location.reload();
+  }, 5000);
+</script>

@@ -1,0 +1,61 @@
+<link rel="stylesheet" href="/static/style.css">
+
+<div class="card">
+    <h2>Admin Dashboard - Orders & Spending</h2>
+    <p>This view shows who ordered, how much was spent, and monthly aggregates.</p>
+
+    <div class="admin-metrics">
+        <div class="admin-metric-box">
+            <div class="admin-metric-label">Total Orders</div>
+            <div class="admin-metric-value">{{ total_orders }}</div>
+        </div>
+        <div class="admin-metric-box">
+            <div class="admin-metric-label">Total Revenue</div>
+            <div class="admin-metric-value">₹ {{ '%.2f'|format(total_revenue or 0) }}</div>
+        </div>
+    </div>
+
+    <h3>Top Students (by spend)</h3>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Email</th>
+                <th># Orders</th>
+                <th>Total Spent</th>
+                <th>History</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user_id, email, num_orders, spent in per_user %}
+            <tr>
+                <td>{{ user_id }}</td>
+                <td>{{ email }}</td>
+                <td>{{ num_orders }}</td>
+                <td>₹ {{ '%.2f'|format(spent or 0) }}</td>
+                <td><a href="{{ url_for('history', email=email) }}">View</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Monthly Summary</h3>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th># Orders</th>
+                <th>Total Spent</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for month, num_orders, spent in per_month %}
+            <tr>
+                <td>{{ month }}</td>
+                <td>{{ num_orders }}</td>
+                <td>₹ {{ '%.2f'|format(spent or 0) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

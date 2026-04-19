@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="menu-page-bg">
+  <div class="menu-shell">
+    <div class="menu-layout">
+      <!-- LEFT: CATEGORIES & ITEMS -->
+      <div>
+      <header class="menu-header">
+        <div class="menu-header-brand">
+          <img
+            src="{{ url_for('static', filename='images/Taste Junction.png') }}"
+            alt="Taste Junction logo"
+            class="menu-logo"
+          />
+          <div>
+            <h1>Order your favourites</h1>
+            <p>
+              Hi {{ email or 'student' }}, pick items from the menu and place your order in a few taps.
+            </p>
+          </div>
+        </div>
+      </header>
+
+    {% for category, items in menu.items() %}
+    <section class="menu-category">
+      <div class="menu-category-header">
+        <h2>{{ category }}</h2>
+        <span class="menu-category-count">{{ items|length }} options</span>
+      </div>
+
+      <div class="menu-items">
+        {% for item_name, price in items %}
+        <div
+          class="menu-item-card"
+          data-name="{{ item_name }}"
+          data-price="{{ price }}"
+        >
+          <div>
+            <h3>{{ item_name }}</h3>
+            <p>Freshly prepared for busy college days.</p>
+          </div>
+          <div class="menu-item-meta">
+            <span class="menu-item-price">₹{{ price }}</span>
+            <div
+              class="menu-item-qty"
+              data-name="{{ item_name }}"
+              data-price="{{ price }}"
+            >
+              <button
+                type="button"
+                class="qty-btn minus"
+                aria-label="Decrease {{ item_name }}"
+              >
+                −
+              </button>
+              <span class="qty-value">0</span>
+              <button
+                type="button"
+                class="qty-btn plus"
+                aria-label="Increase {{ item_name }}"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+  </div>
+
+  <!-- RIGHT: CART SUMMARY -->
+      <aside class="menu-cart">
+        <div class="menu-cart-card">
+      <h2>Your order</h2>
+      <p class="menu-cart-sub">Review your selection before confirming.</p>
+
+      <ul id="cart-items"></ul>
+
+      <div class="menu-cart-footer">
+        <div class="menu-total">
+          <span>Total</span>
+          <span id="cart-total">₹0</span>
+        </div>
+
+        <form method="POST" id="order-form">
+          <input type="hidden" name="food" id="food-input" />
+          <input type="hidden" name="total" id="total-input" />
+          <button
+            type="submit"
+            class="primary full-width"
+            id="place-order"
+            disabled
+          >
+            Place order
+          </button>
+        </form>
+
+        <p class="menu-note">
+          Your order goes directly to the cafeteria queue. Payment is completed on the
+          next step.
+        </p>
+      </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const cartList = document.getElementById("cart-items");
+    const cartTotalEl = document.getElementById("cart-total");
+    const placeOrderBtn = document.getElementById("place-order");
+    const foodInput = document.getElementById("food-input");
+    const totalInput = document.getElementById("total-input");
+    const qtyContainers = document.querySelectorAll(".menu-item-qty");
+
+    const cart = new Map(); // key: name, value: { qty, price }
+
+    function syncQuantitiesFromCart() {
+      // reset all to 0
+      qtyContainers.forEach((c) => {
+        const span = c.querySelector(".qty-value");
+        if (span) span.textContent = "0";
+      });
+
+      // apply cart values
+      cart.forEach((value, name) => {
+        qtyContainers.forEach((c) => {
+          if (c.getAttribute("data-name") === name) {
+            const span = c.querySelector(".qty-value");
+            if (span) span.textContent = String(value.qty);
+          }
+        });
+      });
+    }
+
+    function renderCart() {
+      cartList.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((value, name) => {
+        const lineTotal = value.qty * value.price;
+        total += lineTotal;
+
+        const li = document.createElement("li");
+        li.className = "cart-item";
+        li.innerHTML = `
+          <span class="cart-item-name">${name} × ${value.qty}</span>
+          <span class="cart-item-meta">
+            <span>₹${lineTotal}</span>
+            <button type="button" class="cart-item-remove" data-name="${name}">×</button>
+          </span>
+        `;
+        cartList.appendChild(li);
+      });
+
+      cartTotalEl.textContent = `₹${total}`;
+
+      if (cart.size === 0) {
+        placeOrderBtn.disabled = true;
+        foodInput.value = "";
+        totalInput.value = "";
+        syncQuantitiesFromCart();
+        return;
+      }
+
+      placeOrderBtn.disabled = false;
+      const summary = Array.from(cart.entries())
+        .map(([name, v]) => `${v.qty}x ${name}`)
+        .join(", ");
+      foodInput.value = summary;
+      totalInput.value = total;
+
+      syncQuantitiesFromCart();
+    }
+
+    // Handle + / - clicks via event delegation
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".qty-btn");
+      if (!btn) return;
+
+      const container = btn.closest(".menu-item-qty");
+      if (!container) return;
+
+      const name = container.getAttribute("data-name");
+      const price = parseInt(container.getAttribute("data-price"), 10) || 0;
+      const isPlus = btn.classList.contains("plus");
+
+      const existing = cart.get(name) || { qty: 0, price };
+      if (isPlus) {
+        existing.qty += 1;
+      } else {
+        existing.qty = Math.max(0, existing.qty - 1);
+      }
+
+      if (existing.qty <= 0) {
+        cart.delete(name);
+      } else {
+        cart.set(name, existing);
+      }
+
+      renderCart();
+    });
+
+    // Remove from cart using the × button in the cart list
+    cartList.addEventListener("click", (e) => {
+      const target = e.target;
+      if (target.classList.contains("cart-item-remove")) {
+        const name = target.getAttribute("data-name");
+        cart.delete(name);
+        renderCart();
+      }
+    });
+  })();
+</script>
+
+{% endblock %}

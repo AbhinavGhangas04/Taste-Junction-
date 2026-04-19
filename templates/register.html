@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Register | Taste Junction</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+  </head>
+
+  <body class="login-page">
+    <div class="login-wrapper">
+      <!-- LEFT IMAGE / BRAND -->
+      <div
+        class="login-image"
+        style="background-image:url('{{ url_for('static', filename='images/open.jpg') }}');"
+      >
+        <div class="login-overlay">
+          <h1>Taste Junction</h1>
+          <p>Smart College Canteen Ordering System</p>
+        </div>
+      </div>
+
+      <!-- RIGHT FORM CARD -->
+      <div class="login-form">
+        <div class="card">
+          <h2>Create Account</h2>
+          <p>Join Taste Junction</p>
+
+          {% if error %}
+          <p style="color: #fca5a5">{{ error }}</p>
+          {% endif %}
+          {% if message %}
+          <p style="color: #86efac">{{ message }}</p>
+          {% endif %}
+
+          <form method="POST">
+            <input
+              type="email"
+              name="email"
+              placeholder="College Email"
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+
+            <select name="role" class="input-select">
+              <option value="student">Student</option>
+              <option value="staff">Cafeteria Staff</option>
+            </select>
+
+            <button type="submit" class="btn-primary">Register</button>
+          </form>
+
+          <div class="register-link">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Login</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

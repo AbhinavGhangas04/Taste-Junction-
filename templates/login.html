@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login | Taste Junction</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+  </head>
+
+  <body class="login-page">
+    <div class="login-wrapper">
+      <!-- LEFT IMAGE -->
+      <div
+        class="login-image"
+        style="background-image:url('{{ url_for('static', filename='images/open.jpg') }}');"
+      >
+        <div class="login-overlay">
+          <h1>Taste Junction</h1>
+          <p>Smart College Canteen Ordering System</p>
+        </div>
+      </div>
+
+      <!-- RIGHT FORM -->
+      <div class="login-form">
+        <div class="card">
+          <h2>Login</h2>
+          <p>
+            Login as <b>{{ request.args.get('role','student')|capitalize }}</b>
+          </p>
+
+          {% if error %}
+          <p style="color: #fca5a5">{{ error }}</p>
+          {% endif %}
+
+          <form method="POST">
+            <input
+              type="email"
+              name="email"
+              placeholder="College Email"
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+
+            <!-- 🔥 THIS IS THE MOST IMPORTANT FIX -->
+            <input
+              type="hidden"
+              name="role"
+              value="{{ request.args.get('role','student') }}"
+            />
+
+            <button type="submit" class="btn-primary">Login</button>
+          </form>
+
+          <!-- REGISTER LINK -->
+          <div class="register-link">
+            New user?
+            <a href="{{ url_for('register') }}">Create Account</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+{% extends "base.html" %} {% block content %}
+
+<section class="hero">
+  <div class="hero-left">
+    <h1>Smart Canteen Ordering System</h1>
+    <p>
+      Skip queues. Track orders in real-time. Designed for high-density college
+      campuses.
+    </p>
+
+    <div class="hero-actions">
+      <a href="{{ url_for('login', role='student') }}" class="btn primary">
+        Student Login
+      </a>
+      <a href="{{ url_for('login', role='staff') }}" class="btn outline">
+        Cafeteria Staff
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="stats">
+      <div>
+        <h2>20K+</h2>
+        <span>Students</span>
+      </div>
+      <div>
+        <h2>Live</h2>
+        <span>Order Tracking</span>
+      </div>
+      <div>
+        <h2>UPI</h2>
+        <span>Card / COD</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature-card">
+    <h3>🚀 Real-Time Queue</h3>
+    <p>Know exactly which order is being prepared.</p>
+  </div>
+
+  <div class="feature-card">
+    <h3>💳 Multiple Payments</h3>
+    <p>UPI, Card & Cash on Delivery support.</p>
+  </div>
+
+  <div class="feature-card">
+    <h3>📊 Analytics</h3>
+    <p>Admins get sales & usage insights.</p>
+  </div>
+</section>
+
+{% endblock %}

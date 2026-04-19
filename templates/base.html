@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ outlet if outlet else "Taste Junction" }}</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="nav-left">
+        <img
+          src="{{ url_for('static', filename='images/Taste Junction.png') }}"
+          class="logo"
+          alt="Taste Junction logo"
+        />
+        <span class="brand">Taste Junction</span>
+      </div>
+
+      {% if email %}
+      <div class="nav-right">
+        <span class="user">{{ email }}</span>
+        <a href="{{ url_for('history', email=email) }}">History</a>
+      </div>
+      {% endif %}
+    </nav>
+
+    <main>{% block content %}{% endblock %}</main>
+  </body>
+</html>

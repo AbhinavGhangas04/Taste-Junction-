@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Taste Junction</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="landing-bg">
+    <div class="overlay"></div>
+
+    <div class="landing-content">
+      <h1>Taste Junction</h1>
+      <p>Premium College Canteen Ordering System</p>
+
+      <div class="landing-buttons">
+        <a href="{{ url_for('login', role='student') }}" class="btn primary">
+          🎓 Student Login
+        </a>
+        <a href="{{ url_for('login', role='staff') }}" class="btn outline">
+          🍳 Cafeteria Login
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

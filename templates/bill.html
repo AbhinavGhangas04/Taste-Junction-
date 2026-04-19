@@ -1,0 +1,36 @@
+<link rel="stylesheet" href="/static/style.css">
+
+<div class="card" style="max-width:520px;margin:40px auto;">
+    <h2 style="text-align:center; margin-top:0;">Snapeats | Billing Slip</h2>
+    <hr>
+    <p><b>Outlet:</b> {{ outlet_name }}</p>
+    <p><b>Order ID:</b> #{{ order_id }}</p>
+    <p><b>Date &amp; Time:</b> {{ time }}</p>
+    <p><b>Customer Email:</b> {{ email }}</p>
+    <hr>
+    <h3>Order Summary</h3>
+    <p>{{ food }}</p>
+    <h2 style="text-align:right;">Total: ₹{{ total }}</h2>
+    <hr>
+    {% if payment_method %}
+    <p><b>Payment:</b> {{ payment_method|capitalize }}
+      {% if payment_method == 'upi' and upi_id %}
+        ({{ upi_id }})
+      {% elif payment_method == 'card' and card_last4 %}
+        (Card •••• {{ card_last4 }})
+      {% endif %}
+    </p>
+    <hr>
+    {% endif %}
+    <p style="font-size:12px; text-align:center; color:#666;">Thank you for ordering with Snapeats! Fueling your college days 🔥</p>
+
+    <div style="display:flex; justify-content:space-between; margin-top:15px; gap:10px; flex-wrap:wrap;">
+        <button class="place-btn" onclick="window.print()">Print Slip</button>
+        <a href="{{ url_for('track', order_id=order_id) }}" style="flex:1;">
+            <button class="place-btn">Track Order</button>
+        </a>
+        <a href="{{ url_for('menu', email=email) }}" style="flex:1;">
+            <button class="place-btn">Back to Menu</button>
+        </a>
+    </div>
+</div>
