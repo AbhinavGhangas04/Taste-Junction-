@@ -10,6 +10,16 @@ A college canteen ordering system with:
 - Order history and order tracking
 - Staff/admin order management
 - Simulation dashboard comparing FIFO vs adaptive hybrid scheduling
+## Demo
+- Web app demo (Flask): student ordering + cafeteria admin flow
+- Analytics demo (Streamlit): FIFO vs adaptive scheduler comparison
+
+### Screenshots
+Landing page:
+![Landing Page](static/images/open.jpg)
+
+Branding / logo:
+![Taste Junction Logo](static/images/Taste%20Junction.png)
 
 ## Tech Stack
 - Python
@@ -35,6 +45,9 @@ A college canteen ordering system with:
 2. Create and activate a virtual environment.
 3. Install dependencies with `pip install -r requirements.txt`.
 
+Quick install command:
+- `pip install -r requirements.txt`
+
 ## 2) Configure environment variables
 Set these before running the app:
 - `DB_HOST` (default: `localhost`)
@@ -55,6 +68,17 @@ The app initializes database/tables automatically through `init_db()` on startup
 
 ## 4) Run Streamlit dashboard
 Run `streamlit run streamlit_app.py`.
+
+## Streamlit Community Cloud deployment
+1. Push this repository to GitHub.
+2. Go to Streamlit Community Cloud and create a new app.
+3. Select this repository and set main file path to `streamlit_app.py`.
+4. Add secrets/environment variables in app settings:
+   - `DB_HOST`
+   - `DB_USER`
+   - `DB_PASSWORD`
+   - `DB_NAME`
+5. Deploy.
 
 ## Default URLs
 - Flask app: `http://127.0.0.1:5000`
