@@ -13,6 +13,7 @@ A college canteen ordering system with:
 ## Demo
 - Web app demo (Flask): student ordering + cafeteria admin flow
 - Analytics demo (Streamlit): FIFO vs adaptive scheduler comparison
+- Live Streamlit app: `https://<your-app-name>.streamlit.app` (replace with your deployed app URL)
 
 ### Screenshots
 Landing page:
